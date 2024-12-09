@@ -1,5 +1,7 @@
 [
     {
+		"Id": 1,
+		"IsActive": true,
         "Name": "Regla de Rango",
         "Conditions": {
             "Operator": "AND",
@@ -21,6 +23,8 @@
         ]
     },
     {
+		"Id": 2,
+		"IsActive": true,
         "Name": "Regla de Igualdad",
         "Conditions": {
             "Operator": "==",
@@ -32,6 +36,8 @@
         ]
     },
     {
+		"Id": 3,
+		"IsActive": true,
         "Name": "Regla de Desigualdad",
         "Conditions": {
             "Operator": "!=",
@@ -43,6 +49,8 @@
         ]
     },
     {
+		"Id": 4,
+		"IsActive": true,
         "Name": "Regla Anidada Compleja",
         "Conditions": {
             "LogicalOperator": "OR",
