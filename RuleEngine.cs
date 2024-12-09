@@ -95,49 +95,38 @@ public class RuleEngine
         return input is JValue jVal ? jVal.Value : input;
     }
 
-    public async Task<List<string>> EvaluateRulesConcurrentlyAsync(List<Rule> rules, JObject data)
-    {
-        var tasks = new List<Task<string>>();
-
-        foreach (var rule in rules)
-        {
-            if (rule.IsActive)
-            {
-                tasks.Add(Task.Run(() =>
-                {
-                    bool conditionsMet = EvaluateConditions(rule.Conditions, data);
-                    if (conditionsMet)
-                    {
-                        ExecuteActions(rule.Actions, data);
-                        return $"Regla '{rule.Name}' ejecutada.";
-                    }
-                    return $"Regla '{rule.Name}' no cumplió las condiciones.";
-                }));
-            }
-        }
-
-        var results = await Task.WhenAll(tasks);
-        return new List<string>(results);
-    }
-
     private static bool InOperator(object left, object right)
     {
-        if (right is JsonArray array)
+        if (right is JArray array)
         {
-            return array.Contains(left);
+            foreach (var item in array)
+            {
+                if (Equals(left, item.ToObject<object>()))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
-        throw new InvalidOperationException($"Operador IN no soporta este tipo de dato para 'right': {right.GetType()}");
+
+        throw new InvalidOperationException($"Operador IN no soporta este tipo de dato para 'right': {right?.GetType()}");
     }
 
     private static bool BetweenOperator(object left, object right)
     {
-        if (right is JsonArray range && range.Count == 2)
+        if (right is JArray range && range.Count == 2)
         {
-            var min = Convert.ToDouble(range[0].ToString());
-            var max = Convert.ToDouble(range[1].ToString());
+            var min = Convert.ToDouble(range[0].ToObject<object>());
+            var max = Convert.ToDouble(range[1].ToObject<object>());
             var value = Convert.ToDouble(left);
             return value >= min && value <= max;
         }
-        throw new InvalidOperationException($"Operador BETWEEN no soporta este tipo de dato para 'right': {right.GetType()}");
+
+        throw new InvalidOperationException($"Operador BETWEEN no soporta este tipo de dato para 'right': {right?.GetType()}");
+    }
+
+    private void ExecuteActions(List<Action> actions, JObject data)
+    {
+        // Implementación del método para ejecutar acciones
     }
 }

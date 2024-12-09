@@ -92,5 +92,37 @@
         "Value": "5% Cashback"
       }
     ]
+  },
+  {
+    "Id": 5,
+    "IsActive": true,
+    "Name": "Regla con IN",
+    "Conditions": {
+      "Operator": "IN",
+      "Left": { "var": "user.role" },
+      "Right": [ "Admin", "Editor", "Viewer" ]
+    },
+    "Actions": [
+      {
+        "ActionType": "Notify",
+        "Parameters": { "message": "El rol está permitido." }
+      }
+    ]
+  },
+  {
+    "Id": 6,
+    "IsActive": true,
+    "Name": "Regla con BETWEEN",
+    "Conditions": {
+      "Operator": "BETWEEN",
+      "Left": { "var": "user.age" },
+      "Right": [ 18, 65 ]
+    },
+    "Actions": [
+      {
+        "ActionType": "Notify",
+        "Parameters": { "message": "La edad está dentro del rango." }
+      }
+    ]
   }
 ]
