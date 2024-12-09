@@ -1,0 +1,76 @@
+[
+    {
+        "Name": "Regla de Rango",
+        "Conditions": {
+            "Operator": "AND",
+            "SubConditions": [
+                {
+                    "Operator": ">=",
+                    "Left": { "var": "compra.total" },
+                    "Right": 100
+                },
+                {
+                    "Operator": "<=",
+                    "Left": { "var": "compra.total" },
+                    "Right": 200
+                }
+            ]
+        },
+        "Actions": [
+            { "Type": "descuento", "Value": "10%" }
+        ]
+    },
+    {
+        "Name": "Regla de Igualdad",
+        "Conditions": {
+            "Operator": "==",
+            "Left": { "var": "cliente.tipo" },
+            "Right": "VIP"
+        },
+        "Actions": [
+            { "Type": "beneficio", "Value": "Envío Gratis" }
+        ]
+    },
+    {
+        "Name": "Regla de Desigualdad",
+        "Conditions": {
+            "Operator": "!=",
+            "Left": { "var": "cliente.region" },
+            "Right": "bloqueada"
+        },
+        "Actions": [
+            { "Type": "permiso", "Value": "Acceso a Ofertas" }
+        ]
+    },
+    {
+        "Name": "Regla Anidada Compleja",
+        "Conditions": {
+            "LogicalOperator": "OR",
+            "SubConditions": [
+                {
+                    "Operator": ">",
+                    "Left": { "var": "compra.total" },
+                    "Right": 500
+                },
+                {
+                    "LogicalOperator": "AND",
+                    "SubConditions": [
+                        {
+                            "Operator": "==",
+                            "Left": { "var": "cliente.tipo" },
+                            "Right": "Regular"
+                        },
+                        {
+                            "Operator": "<=",
+                            "Left": { "var": "compra.total" },
+                            "Right": 300
+                        }
+                    ]
+                }
+            ]
+        },
+        "Actions": [
+            { "Type": "recompensa", "Value": "5% Cashback" }
+        ]
+    }
+]

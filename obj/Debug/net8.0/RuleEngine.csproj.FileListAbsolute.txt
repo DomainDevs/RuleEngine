@@ -1,0 +1,17 @@
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\bin\Debug\net8.0\RuleEngine.exe
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\bin\Debug\net8.0\RuleEngine.deps.json
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\bin\Debug\net8.0\RuleEngine.runtimeconfig.json
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\bin\Debug\net8.0\RuleEngine.dll
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\bin\Debug\net8.0\RuleEngine.pdb
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.csproj.AssemblyReference.cache
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.GeneratedMSBuildEditorConfig.editorconfig
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.AssemblyInfoInputs.cache
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.AssemblyInfo.cs
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.csproj.CoreCompileInputs.cache
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.csproj.Up2Date
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.dll
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\refint\RuleEngine.dll
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.pdb
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\RuleEngine.genruntimeconfig.cache
+C:\Devs\MOTOR DE REGLAS\RULEENG13\RuleEngine\obj\Debug\net8.0\ref\RuleEngine.dll
