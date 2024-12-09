@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq; //Es mejor: System.Text.Json, por eficiencia
+using System.Text.Json.Nodes;
+using Newtonsoft.Json.Linq;
 
 public class RuleEngine
 {
@@ -12,22 +13,13 @@ public class RuleEngine
         { ">=", (left, right) => Compare(left, right, (x, y) => x >= y) },
         { "<=", (left, right) => Compare(left, right, (x, y) => x <= y) },
         { "==", (left, right) => Equals(left, right) },
-        { "!=", (left, right) => !Equals(left, right) }
+        { "!=", (left, right) => !Equals(left, right) },
+        { "IN", (left, right) => InOperator(left, right) },
+        { "BETWEEN", (left, right) => BetweenOperator(left, right) }
     };
 
 
     // Método para comparar valores numéricos
-    /*
-    private static bool Compare(object left, object right, Func<double, double, bool> comparison)
-    {
-        if (TryConvertToDouble(left, out double leftValue) && TryConvertToDouble(right, out double rightValue))
-        {
-            return comparison(leftValue, rightValue);
-        }
-
-        throw new InvalidOperationException($"No se pudo comparar los valores: {left}, {right}");
-    }
-    */
     private static bool Compare(object left, object right, Func<double, double, bool> comparison)
     {
         if (TryConvertToDouble(left, out double leftValue) && TryConvertToDouble(right, out double rightValue))
@@ -38,50 +30,6 @@ public class RuleEngine
         throw new InvalidOperationException($"No se pudo comparar los valores: {left}, {right}");
     }
 
-    // Intentar convertir un objeto a double
-    /*
-    private static bool TryConvertToDouble(object value, out double result)
-    {
-        result = 0;
-
-        if (value == null)
-            return false;
-
-        if (value is JValue jValue)
-        {
-            value = jValue.Value; // Extraer el valor del JValue
-        }
-
-        if (double.TryParse(value?.ToString(), out result))
-        {
-            return true;
-        }
-
-        return false;
-    }
-    */
-    // Intentar convertir un objeto a double
-    /*
-    private static bool TryConvertToDouble(object value, out double result)
-    {
-        result = 0;
-
-        if (value == null)
-            return false;
-
-        if (value is JValue jValue)
-        {
-            value = jValue.Value; // Extraer el valor del JValue
-        }
-
-        if (double.TryParse(value?.ToString(), out result))
-        {
-            return true;
-        }
-
-        return false;
-    }
-    */
     // Intentar convertir un objeto a double
     private static bool TryConvertToDouble(object value, out double result)
     {
@@ -90,45 +38,6 @@ public class RuleEngine
         return double.TryParse(value?.ToString(), out result);
     }
 
-
-    // Método principal para evaluar condiciones
-    /*
-    public bool EvaluateConditions(Condition condition, JObject data)
-    {
-        // Si la condición tiene subcondiciones, evaluarlas recursivamente
-        if (condition.SubConditions != null && condition.SubConditions.Count > 0)
-        {
-            var logicalOperator = condition.LogicalOperator ?? "AND"; // Operador lógico predeterminado: AND
-            bool result = logicalOperator == "AND";
-
-            foreach (var subCondition in condition.SubConditions)
-            {
-                var subResult = EvaluateConditions(subCondition, data);
-                result = logicalOperator switch
-                {
-                    "AND" => result && subResult,
-                    "OR" => result || subResult,
-                    "NOT" => !subResult,
-                    _ => throw new InvalidOperationException($"Operador lógico no reconocido: {logicalOperator}")
-                };
-            }
-            return result;
-        }
-        else
-        {
-            // Evaluar condición simple
-            var leftValue = ExtractSimpleValue(condition.Left, data);
-            var rightValue = ExtractSimpleValue(condition.Right, data);
-
-            if (Operators.ContainsKey(condition.Operator))
-            {
-                return Operators[condition.Operator](leftValue, rightValue);
-            }
-
-            throw new InvalidOperationException($"Operador no reconocido: {condition.Operator}");
-        }
-    }
-    */
     // Método principal para evaluar condiciones
     public bool EvaluateConditions(Condition condition, JObject data)
     {
@@ -193,33 +102,6 @@ public class RuleEngine
         return path;
     }
 
-    // Extraer un valor simple desde una variable o un dato literal
-    /*
-    private static object ExtractSimpleValue(object input, JObject data)
-    {
-        if (input is string pathStr && pathStr.StartsWith("var"))
-        {
-            var tokens = pathStr.Split('.');
-            JToken current = data;
-
-            foreach (var token in tokens[1..])
-            {
-                current = current[token];
-                if (current == null)
-                    return null;
-            }
-
-            return current is JValue jValue ? jValue.Value : current;
-        }
-
-        if (input is JValue jVal)
-        {
-            return jVal.Value;
-        }
-
-        return input; // Devolver el literal si no es un objeto JSON o una variable
-    }
-    */
     // Extraer un valor simple desde una variable o un dato literal
     private static object ExtractSimpleValue(object input, JObject data)
     {
@@ -345,5 +227,27 @@ public class RuleEngine
 
         return true;
     }
+
+    private static bool InOperator(object left, object right)
+    {
+        if (right is JsonArray array)
+        {
+            return array.Contains(left);
+        }
+        throw new InvalidOperationException($"Operador IN no soporta este tipo de dato para 'right': {right.GetType()}");
+    }
+
+    private static bool BetweenOperator(object left, object right)
+    {
+        if (right is JsonArray range && range.Count == 2)
+        {
+            var min = Convert.ToDouble(range[0].ToString());
+            var max = Convert.ToDouble(range[1].ToString());
+            var value = Convert.ToDouble(left);
+            return value >= min && value <= max;
+        }
+        throw new InvalidOperationException($"Operador BETWEEN no soporta este tipo de dato para 'right': {right.GetType()}");
+    }
+
 
 }
