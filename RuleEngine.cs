@@ -18,8 +18,6 @@ public class RuleEngine
         { "BETWEEN", (left, right) => BetweenOperator(left, right) }
     };
 
-
-    // Método para comparar valores numéricos
     private static bool Compare(object left, object right, Func<double, double, bool> comparison)
     {
         if (TryConvertToDouble(left, out double leftValue) && TryConvertToDouble(right, out double rightValue))
@@ -30,7 +28,6 @@ public class RuleEngine
         throw new InvalidOperationException($"No se pudo comparar los valores: {left}, {right}");
     }
 
-    // Intentar convertir un objeto a double
     private static bool TryConvertToDouble(object value, out double result)
     {
         result = 0;
@@ -38,7 +35,7 @@ public class RuleEngine
         return double.TryParse(value?.ToString(), out result);
     }
 
-    // Método principal para evaluar condiciones
+    // Método para evaluar condiciones (como antes)
     public bool EvaluateConditions(Condition condition, JObject data)
     {
         // Si la condición tiene subcondiciones, evaluarlas recursivamente
@@ -75,34 +72,6 @@ public class RuleEngine
         }
     }
 
-
-    // Obtener el valor de una variable desde los datos o usar el valor literal
-    private static object GetValue(object path, JObject data)
-    {
-        if (path is JObject jObject)
-        {
-            return jObject; // Devuelve el objeto JSON si es uno
-        }
-
-        if (path is string pathStr && pathStr.StartsWith("var"))
-        {
-            var tokens = pathStr.Split('.');
-            JToken current = data;
-
-            foreach (var token in tokens[1..])
-            {
-                current = current[token];
-                if (current == null)
-                    return null;
-            }
-
-            return current is JValue jValue ? jValue.Value : current;
-        }
-
-        return path;
-    }
-
-    // Extraer un valor simple desde una variable o un dato literal
     private static object ExtractSimpleValue(object input, JObject data)
     {
         if (input is JObject jObject && jObject.ContainsKey("var"))
@@ -116,116 +85,39 @@ public class RuleEngine
                 foreach (var token in tokens)
                 {
                     current = current[token];
-                    if (current == null)
-                        return null;
+                    if (current == null) return null;
                 }
 
                 return current is JValue jValue ? jValue.Value : current;
             }
         }
 
-        if (input is JValue jVal)
-        {
-            return jVal.Value;
-        }
-
-        return input;
+        return input is JValue jVal ? jVal.Value : input;
     }
 
-    private void ValidateCondition(Condition condition)
+    public async Task<List<string>> EvaluateRulesConcurrentlyAsync(List<Rule> rules, JObject data)
     {
-        if (condition == null)
+        var tasks = new List<Task<string>>();
+
+        foreach (var rule in rules)
         {
-            throw new ArgumentNullException(nameof(condition), "La condición no puede ser nula.");
-        }
-
-        // Si tiene subcondiciones, validamos la estructura lógica
-        if (condition.SubConditions != null && condition.SubConditions.Count > 0)
-        {
-            if (string.IsNullOrEmpty(condition.LogicalOperator))
+            if (rule.IsActive)
             {
-                throw new InvalidOperationException("Las subcondiciones requieren un operador lógico.");
-            }
-
-            // Validar operador lógico permitido
-            var validLogicalOperators = new[] { "AND", "OR", "NOT" };
-            if (!validLogicalOperators.Contains(condition.LogicalOperator.ToUpper()))
-            {
-                throw new InvalidOperationException($"Operador lógico no reconocido: {condition.LogicalOperator}");
-            }
-
-            // Validar recursivamente las subcondiciones
-            foreach (var subCondition in condition.SubConditions)
-            {
-                ValidateCondition(subCondition);
-            }
-        }
-        else
-        {
-            // Si no hay subcondiciones, validamos como una condición simple
-            if (string.IsNullOrEmpty(condition.Operator))
-            {
-                throw new InvalidOperationException("Una condición simple requiere un operador.");
-            }
-
-            // Validar que el operador sea reconocido
-            if (!Operators.ContainsKey(condition.Operator))
-            {
-                throw new InvalidOperationException($"Operador no reconocido: {condition.Operator}");
-            }
-
-            // Validar que ambas partes (Left y Right) estén definidas
-            if (condition.Left == null || condition.Right == null)
-            {
-                throw new InvalidOperationException("Una condición simple debe tener valores definidos para 'Left' y 'Right'.");
-            }
-        }
-    }
-
-    private static void ValidateData(Condition condition, JObject data)
-    {
-        if (condition == null || data == null) return;
-
-        if (condition.Left is JObject leftObj && leftObj.ContainsKey("var"))
-        {
-            string path = leftObj["var"]?.ToString();
-            if (!PathExistsInData(path, data))
-            {
-                throw new InvalidOperationException($"La clave '{path}' no existe en los datos proporcionados.");
+                tasks.Add(Task.Run(() =>
+                {
+                    bool conditionsMet = EvaluateConditions(rule.Conditions, data);
+                    if (conditionsMet)
+                    {
+                        ExecuteActions(rule.Actions, data);
+                        return $"Regla '{rule.Name}' ejecutada.";
+                    }
+                    return $"Regla '{rule.Name}' no cumplió las condiciones.";
+                }));
             }
         }
 
-        if (condition.Right is JObject rightObj && rightObj.ContainsKey("var"))
-        {
-            string path = rightObj["var"]?.ToString();
-            if (!PathExistsInData(path, data))
-            {
-                throw new InvalidOperationException($"La clave '{path}' no existe en los datos proporcionados.");
-            }
-        }
-
-        if (condition.SubConditions != null)
-        {
-            foreach (var subCondition in condition.SubConditions)
-            {
-                ValidateData(subCondition, data);
-            }
-        }
-    }
-
-    private static bool PathExistsInData(string path, JObject data)
-    {
-        if (string.IsNullOrEmpty(path)) return false;
-        var tokens = path.Split('.');
-        JToken current = data;
-
-        foreach (var token in tokens)
-        {
-            current = current[token];
-            if (current == null) return false;
-        }
-
-        return true;
+        var results = await Task.WhenAll(tasks);
+        return new List<string>(results);
     }
 
     private static bool InOperator(object left, object right)
@@ -248,6 +140,4 @@ public class RuleEngine
         }
         throw new InvalidOperationException($"Operador BETWEEN no soporta este tipo de dato para 'right': {right.GetType()}");
     }
-
-
 }

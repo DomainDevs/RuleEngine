@@ -1,76 +1,96 @@
 [
-    {
-        "Name": "Regla de Rango",
-        "Conditions": {
-            "Operator": "AND",
-            "SubConditions": [
-                {
-                    "Operator": ">=",
-                    "Left": { "var": "compra.total" },
-                    "Right": 100
-                },
-                {
-                    "Operator": "<=",
-                    "Left": { "var": "compra.total" },
-                    "Right": 200
-                }
-            ]
+  {
+    "Id": 1,
+    "IsActive": false,
+    "Name": "Regla de Rango",
+    "Conditions": {
+      "Operator": "AND",
+      "SubConditions": [
+        {
+          "Operator": ">=",
+          "Left": { "var": "compra.total" },
+          "Right": 100
         },
-        "Actions": [
-            { "Type": "descuento", "Value": "10%" }
-        ]
+        {
+          "Operator": "<=",
+          "Left": { "var": "compra.total" },
+          "Right": 200
+        }
+      ]
     },
-    {
-        "Name": "Regla de Igualdad",
-        "Conditions": {
-            "Operator": "==",
-            "Left": { "var": "cliente.tipo" },
-            "Right": "VIP"
-        },
-        "Actions": [
-            { "Type": "beneficio", "Value": "Envío Gratis" }
-        ]
+    "Actions": [
+      {
+        "Type": "descuento",
+        "Value": "10%"
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "IsActive": true,
+    "Name": "Regla de Igualdad",
+    "Conditions": {
+      "Operator": "==",
+      "Left": { "var": "cliente.tipo" },
+      "Right": "VIP"
     },
-    {
-        "Name": "Regla de Desigualdad",
-        "Conditions": {
-            "Operator": "!=",
-            "Left": { "var": "cliente.region" },
-            "Right": "bloqueada"
-        },
-        "Actions": [
-            { "Type": "permiso", "Value": "Acceso a Ofertas" }
-        ]
+    "Actions": [
+      {
+        "Type": "beneficio",
+        "Value": "Envío Gratis"
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "IsActive": true,
+    "Name": "Regla de Desigualdad",
+    "Conditions": {
+      "Operator": "!=",
+      "Left": { "var": "cliente.region" },
+      "Right": "bloqueada"
     },
-    {
-        "Name": "Regla Anidada Compleja",
-        "Conditions": {
-            "LogicalOperator": "OR",
-            "SubConditions": [
-                {
-                    "Operator": ">",
-                    "Left": { "var": "compra.total" },
-                    "Right": 500
-                },
-                {
-                    "LogicalOperator": "AND",
-                    "SubConditions": [
-                        {
-                            "Operator": "==",
-                            "Left": { "var": "cliente.tipo" },
-                            "Right": "Regular"
-                        },
-                        {
-                            "Operator": "<=",
-                            "Left": { "var": "compra.total" },
-                            "Right": 300
-                        }
-                    ]
-                }
-            ]
+    "Actions": [
+      {
+        "Type": "permiso",
+        "Value": "Acceso a Ofertas"
+      }
+    ]
+  },
+  {
+    "Id": 4,
+    "IsActive": true,
+    "Name": "Regla Anidada Compleja",
+    "Conditions": {
+      "LogicalOperator": "OR",
+      "SubConditions": [
+        {
+          "Operator": ">",
+          "Left": { "var": "compra.total" },
+          "Right": 500
         },
-        "Actions": [
-            { "Type": "recompensa", "Value": "5% Cashback" }
-        ]
-    }
+        {
+          "LogicalOperator": "AND",
+          "SubConditions": [
+            {
+              "Operator": "==",
+              "Left": { "var": "cliente.tipo" },
+              "Right": "Regular"
+            },
+            {
+              "Operator": "<=",
+              "Left": { "var": "compra.total" },
+              "Right": 300
+            }
+          ]
+        }
+      ]
+    },
+    "Actions": [
+      {
+        "Type": "recompensa",
+        "Value": "5% Cashback"
+      }
+    ]
+  }
 ]
