@@ -112,5 +112,35 @@
 			"Parameters": { "message": "La edad está dentro del rango." }
 		}
 		]
-	}
+	},
+  {
+    "id": 7,
+    "isActive": true,
+    "name": "Regla IN",
+    "conditions": {
+      "left": { "var": "cliente.region" },
+      "operator": "IN",
+      "right": [ "norte", "sur", "este" ]
+    },
+    "actions": [
+      {
+        "name": "Acción IN"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "isActive": true,
+    "name": "Regla BETWEEN",
+    "conditions": {
+      "left": { "var": "compra.total" },
+      "operator": "BETWEEN",
+      "right": [100, 200]
+    },
+    "actions": [
+      {
+        "name": "Acción BETWEEN"
+      }
+    ]
+  }
 ]

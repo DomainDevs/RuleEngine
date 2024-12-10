@@ -124,5 +124,21 @@
         "Parameters": { "message": "La edad está dentro del rango." }
       }
     ]
+  },
+  {
+    "id": 7,
+    "isActive": true,
+    "name": "Regla IN",
+    "conditions": {
+      "left": { "var": "cliente.region" },
+      "operator": "IN",
+      "right": [ "norte", "sur", "este" ]
+    },
+    "actions": [
+      {
+        "name": "Acción IN"
+      }
+    ]
   }
+
 ]
