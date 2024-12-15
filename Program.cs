@@ -30,6 +30,9 @@ class Program
                 ["total"] = 170,
                 ["descuento"] = 10,
                 ["metodo_pago"] = "tarjeta"
+            },
+            ["compra"] = new JObject { 
+                ["total"] = 100 
             }
         };
 

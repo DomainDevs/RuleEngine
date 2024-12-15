@@ -67,7 +67,6 @@ public class RuleEngine
             {
                 return Operators[condition.Operator](leftValue, rightValue);
             }
-
             throw new InvalidOperationException($"Operador no reconocido: {condition.Operator}");
         }
     }
